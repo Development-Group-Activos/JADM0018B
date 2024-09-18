@@ -38,7 +38,7 @@ public class ReloadPasswordRS {
         if (validation.equals("FALSE")) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Su solicitud es inválida o ha expirado").build();
         }
-        return Response.ok(validation).build();
+        return Response.ok("solicitud exitosa para: " + validation).build();
     }
 
     // Endpoint para obtener el correo       //se valida explicitamente la existencia del usuario
@@ -70,14 +70,15 @@ public class ReloadPasswordRS {
     }
     
     // Endpoint para actualizar la contraseña
-    @POST
+    @PUT
     @Path("/update")
     @Produces(MediaType.APPLICATION_JSON)  
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePassword(@QueryParam("username") String username,
+    public Response updatePassword(@QueryParam("userName") String username,
                                    @QueryParam("newPassword") String newPassword,
+                                   @QueryParam("requestId") String requestId,
                                    @QueryParam("domain") String domain) {
-        boolean success = reloadPasswordService.updatePassword(username, newPassword, domain);
+        boolean success = reloadPasswordService.updatePassword(username, newPassword, requestId, domain);
         if (success) {
             return Response.ok("Contraseña actualizada").build();
         } else {

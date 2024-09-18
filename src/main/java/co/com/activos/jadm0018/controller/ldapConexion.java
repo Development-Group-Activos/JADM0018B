@@ -47,7 +47,7 @@ public class ldapConexion implements LdapInterface {
 //        }
     }
 
-    @Override                                
+    @Override
     public boolean loadUser(Usuario user, String rama) {
         DirContext ctx = getUserContext(user, rama);
         return ctx != null;
@@ -55,7 +55,7 @@ public class ldapConexion implements LdapInterface {
 
     public DirContext getUserContext(Usuario user, String rama) {
         try {
-            Hashtable env = new Hashtable();
+            Hashtable<String, String> env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, credentials.getProperty("INITIAL_CONTEXT_FACTORY"));
             env.put(Context.PROVIDER_URL, credentials.getProperty("PROVIDER_URL"));
             env.put(Context.SECURITY_PRINCIPAL,
@@ -90,13 +90,12 @@ public class ldapConexion implements LdapInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return result;
     }
-    
+
     public DirContext getContext() {
         Hashtable<String, String> environment = new Hashtable<>();
-
 
         //LDAPConnection.LDAP_V3
         environment.put(Context.INITIAL_CONTEXT_FACTORY, credentials.getProperty("INITIAL_CONTEXT_FACTORY"));
@@ -117,7 +116,7 @@ public class ldapConexion implements LdapInterface {
         }
         return null;
     }
-    
+
     @Override                                                              //indica que estás implementando el método de la interfaz LdapInterface
     public String findPropertyByAccountName2(String accountName, String property) {
 
@@ -207,7 +206,7 @@ public class ldapConexion implements LdapInterface {
         DirContext dc;
 
         try {
-            Hashtable env = new Hashtable();
+            Hashtable<String, String> env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, credentials.getProperty("INITIAL_CONTEXT_FACTORY"));
             env.put(Context.PROVIDER_URL, credentials.getProperty("PROVIDER_URL"));
             // autenticaciones de este aplicativo solo sobre el arbol usuarios
@@ -249,13 +248,14 @@ public class ldapConexion implements LdapInterface {
                 while (rs.next()) {
                     result = rs.getString("estado");  //trae el estado del la columna con nombre "estado" el resultado desde el procedimiento almacenado
                 }
-           rs.close(); }
-           cs.close();
+                rs.close();
+            }
+            cs.close();
         } catch (Exception e) {
             System.out.println("No se puede cargar objeto de tabla agrupacionsaas, Error Causado por " + e);
         } finally {
             try {
-                
+
                 conexion.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -280,7 +280,7 @@ public class ldapConexion implements LdapInterface {
                 result = cs.getString(2);
             }
             cs.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("No se puede cargar objeto de tabla agrupacionsaas, Error Causado por " + e);
         } finally {
             try {
@@ -312,12 +312,12 @@ public class ldapConexion implements LdapInterface {
                 return "-1";
             }
             cs.close();
-        } catch (Exception ee) {
+        } catch (SQLException ee) {
             ee.printStackTrace();
         } finally {
             try {
                 conexion.close();
-            } catch (Exception ee) {
+            } catch (SQLException ee) {
                 ee.printStackTrace();
             }
         }
@@ -346,17 +346,17 @@ public class ldapConexion implements LdapInterface {
             if (error != null) {
                 System.out.println(error);
             }
-           callableStatement.close();
-        } catch (Exception e) { // TODO Auto-generated
+            callableStatement.close();
+        } catch (SQLException e) { // TODO Auto-generated
             e.printStackTrace();
             throw new FacesException(e);
-        }finally {
-        try {
-             conexion.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-    }
     }
 
 }

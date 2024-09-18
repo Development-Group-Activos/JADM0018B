@@ -5,6 +5,7 @@ import co.com.activos.jadm0018.controller.ldapConexion;
 import co.com.activos.jadm0018.interfaces.LdapInterface;
 
 import co.com.activos.jadm0018.model.Usuario;
+import javax.naming.directory.DirContext;
 
 public abstract class Ldap {
 
@@ -66,6 +67,11 @@ public abstract class Ldap {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static DirContext getContext() {
+        ldapConexion ldap = new ldapConexion();
+        return ldap.getContext(); // Llama a la implementación en ldapConexion
     }
 
 }
