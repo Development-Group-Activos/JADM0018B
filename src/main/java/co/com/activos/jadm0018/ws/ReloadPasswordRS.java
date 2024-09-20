@@ -41,7 +41,7 @@ public class ReloadPasswordRS {
         return Response.ok("solicitud exitosa para: " + validation).build();
     }
 
-    // Endpoint para obtener el correo       //se valida explicitamente la existencia del usuario
+    // Endpoint para obtener el correo                                      //se valida explicitamente la existencia del usuario
     @GET
     @Path("/find-email")
     @Produces(MediaType.APPLICATION_JSON)  

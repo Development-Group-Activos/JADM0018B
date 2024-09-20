@@ -6,7 +6,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import oracle.sql.CLOB;
 import java.util.Properties;
 
 import javax.faces.FacesException;
@@ -324,6 +324,7 @@ public class ldapConexion implements LdapInterface {
         return id;
     }
 
+   /*
     @Override
     public void sendMail(String destino, String para, String asunto, String contenido) {
         Connection conexion = OracleFactory.getConexion();
@@ -358,5 +359,41 @@ public class ldapConexion implements LdapInterface {
             }
         }
     }
-
+ */
+    @Override
+    public void sendMail(String vcDestino, String vcPara, String vcAsunto, String vcContenido) {
+        Connection conexion = OracleFactory.getConexion();
+        String error = null;
+        try {
+             // Crea un objeto CLOB para el contenido del correo
+            CLOB clob = CLOB.createTemporary(conexion, false, CLOB.DURATION_SESSION);
+            clob.setString(1, vcContenido); // Almacena el contenido en el CLOB
+            
+            String ConsultaSql = "{ CALL QB_CONSOLA_BMX.PL_CORREO_RESTAB_CLAVE(?, ?, ?, ?, ?) }";
+            CallableStatement cs = conexion.prepareCall(ConsultaSql);
+            cs.setString(1, vcDestino);   
+            cs.setString(2, vcPara); 
+            cs.setString(3, vcAsunto);          
+            cs.setClob(4, clob); // convertir el Contenido HTML  a (CLOB)        
+            cs.registerOutParameter(5, OracleTypes.VARCHAR);
+            cs.execute();
+            error = cs.getString(5);
+            if (error != null && !error.isEmpty()) {
+                System.out.println("Error al enviar el correo: " + error);
+            } else {
+                System.out.println("Correo enviado correctamente.");
+            }
+            cs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al ejecutar el procedimiento de envío de correo", e);
+        } finally {
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
 }
